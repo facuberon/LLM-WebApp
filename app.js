@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 topP: topP,
                 topK: topK,
                 maxOutputTokens: maxOutputTokens,
-                responseMimeType: 'text/plain',
+                response_mime_type: 'text/markdown',
             };
 
             // Initialize Gemini API
@@ -264,8 +264,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender.toLowerCase() === 'user' ? 'user-message' : 'ai-message'}`;
         
-        // Format the text (handle newlines)
-        const formattedText = text.replace(/\n/g, '<br>');
+        // Process text as Markdown if it's from AI
+        let formattedText;
+        if (sender.toLowerCase() === 'ai') {
+            // Use marked.js to convert Markdown to HTML
+            formattedText = marked.parse(text);
+        } else {
+            // For user messages, just handle newlines
+            formattedText = text.replace(/\n/g, '<br>');
+        }
+        
         messageDiv.innerHTML = formattedText;
         
         // Add timestamp
