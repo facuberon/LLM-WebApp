@@ -7,10 +7,7 @@
 
 Una interfaz web dinámica e intuitiva para interactuar con los potentes modelos de IA de Google Gemini. Chatea, personaliza parámetros y obtén respuestas contextualizadas basadas en el contenido de tus propios archivos PDF, todo directamente desde tu navegador.
 
-![Demostración de la App](https://URL_DE_TU_GIF_O_IMAGEN_AQUI.gif)
-_Una demostración de la interfaz en acción._
 
-[**Ver Demo en Vivo** 🌐](URL_DE_TU_DEMO_AQUI)
 
 ## ✨ Características Principales
 
@@ -45,7 +42,7 @@ Asegúrate de tener:
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone [https://github.com/facuberon/LLM-WebApp.git](https://github.com/facuberon/LLM-WebApp.git)
+    git repo clone facuberon/LLM-WebApp
     ```
 2.  **Navega al directorio del proyecto:**
     ```bash
