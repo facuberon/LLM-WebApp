@@ -1,3 +1,73 @@
-#                                                LLM Custom WebApp
+# 🚀 LLM-WebApp para Modelos de Gemini AI personalizados
 
-🛠👨‍🔧    Proyecto en construcción    🛠👨‍🔧
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E44AD?style=for-the-badge&logo=google&logoColor=white)
+
+Una interfaz web dinámica e intuitiva para interactuar con los potentes modelos de IA de Google Gemini. Chatea, personaliza parámetros y obtén respuestas contextualizadas basadas en el contenido de tus propios archivos PDF, todo directamente desde tu navegador.
+
+![Demostración de la App](https://URL_DE_TU_GIF_O_IMAGEN_AQUI.gif)
+_Una demostración de la interfaz en acción._
+
+[**Ver Demo en Vivo** 🌐](URL_DE_TU_DEMO_AQUI)
+
+## ✨ Características Principales
+
+-   **🚀 Selección de Modelos de Vanguardia:** Elige entre las versiones más recientes de Gemini: `gemini-2.5-pro`, `gemini-2.5-flash` y `gemini-2.5-flash-lite`.
+-   **⚙️ Control Total sobre los Parámetros:** Ajusta con precisión la `temperatura`, `top-p`, `top-k` y el máximo de `tokens` para moldear la creatividad y exactitud de la IA.
+-   **📄 Chat con tus Documentos (PDF):** Carga un archivo PDF y la IA lo usará como base de conocimiento para responder tus preguntas de forma contextualizada.
+-   **💬 Interfaz de Chat Moderna:** Una experiencia de usuario limpia, responsiva y agradable para mantener conversaciones fluidas.
+-   **💅 Renderizado de Markdown:** Las respuestas de la IA se muestran con formato Markdown, permitiendo una fácil lectura de listas, código, tablas y más.
+-   **⚡ Arquitectura 100% Client-Side:** Toda la lógica se ejecuta en tu navegador. No se necesita un backend, lo que garantiza privacidad y rapidez.
+
+## 🛠️ Tecnologías Utilizadas
+
+-   **Python:** Para realizar pruebas de llamada de API y ajustes de parámetros de los modelos.
+-   **HTML5:** Para la estructura semántica del contenido.
+-   **CSS3:** Para el diseño y la apariencia visual.
+-   **JavaScript (Vanilla):** Para toda la lógica interactiva y la comunicación con la API.
+-   **Google AI JavaScript SDK:** Para la integración directa con los modelos de Gemini.
+-   **Marked.js:** Una librería ligera para renderizar Markdown en el cliente.
+-   **pdf.js:** Para extraer el texto de los archivos PDF directamente en el navegador.
+
+## 🏁 Cómo Empezar
+
+Para ejecutar este proyecto en tu máquina local, sigue estos sencillos pasos.
+
+### Requisitos Previos
+
+Asegúrate de tener:
+1.  Un navegador web moderno (Chrome, Firefox, Edge).
+2.  Tu propia **Clave API de Google Gemini**. Puedes obtener una en [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+### Instalación
+
+1.  **Clona el repositorio:**
+    ```bash
+    git clone [https://github.com/facuberon/LLM-WebApp.git](https://github.com/facuberon/LLM-WebApp.git)
+    ```
+2.  **Navega al directorio del proyecto:**
+    ```bash
+    cd LLM-WebApp
+    ```
+3.  **Abre el archivo `index.html` en tu navegador.**
+    ¡Y eso es todo! La aplicación está lista para usarse.
+
+## 📖 Guía de Uso
+
+1.  🔑 **Ingresa tu Clave API:** Pega tu clave API de Gemini en el campo correspondiente.
+2.  🤖 **Elige un Modelo:** Selecciona el modelo de IA que desees utilizar en el menú desplegable.
+3.  📄 **Sube un PDF (Opcional):** Haz clic en "Elegir Archivo" para seleccionar un PDF. La IA usará su contenido como contexto.
+4.  🎛️ **Ajusta los Parámetros:** Modifica los deslizadores de `temperatura`, `top-p`, etc., según tus necesidades.
+5.  ▶️ **Inicia la Conversación:** Presiona el botón "Iniciar Chat".
+6.  ⌨️ **Envía Mensajes:** Escribe tu pregunta en el campo de texto y presiona `Enter` o el botón "Enviar".
+7.  🔄 **Reinicia el Chat:** Si quieres empezar de nuevo, haz clic en "Reiniciar Chat" para volver a la pantalla de configuración.
+
+## 💡 Próximas Mejoras
+
+Este proyecto está en constante evolución. Algunas ideas para el futuro incluyen:
+-   [ ] Historial de conversaciones persistente (usando `localStorage`).
+-   [ ] Soporte para más formatos de archivo ( `.txt`, `.md`, `.docx`).
+-   [ ] Opción para exportar la conversación.
+-   [ ] Mejoras en la interfaz de usuario y animaciones.

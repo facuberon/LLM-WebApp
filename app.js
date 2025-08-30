@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const topKSlider = document.getElementById('top-k');
     const topKValue = document.getElementById('top-k-value');
     const maxTokensInput = document.getElementById('max-tokens');
+    const pdfFileInput = document.getElementById('pdf-file');
+    const pdfFileNameDiv = document.getElementById('pdf-file-name');
     const startChatButton = document.getElementById('start-chat');
     const chatSection = document.querySelector('.chat-section');
     const setupSection = document.querySelector('.setup-section');
@@ -20,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Chat history array
     let messages = [];
     let chatSession = null;
+    let pdfText = '';
+
+    // PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
 
     // Update slider values display
     temperatureSlider.addEventListener('input', () => {
@@ -34,16 +40,53 @@ document.addEventListener('DOMContentLoaded', () => {
         topKValue.textContent = topKSlider.value;
     });
 
+    // PDF file input handler
+    pdfFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file && file.type === 'application/pdf') {
+            pdfFileNameDiv.textContent = `Loading: ${file.name}`;
+            try {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const pdfData = new Uint8Array(event.target.result);
+                    const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                    let text = '';
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        text += textContent.items.map(item => item.str).join(' ') + '\n';
+                    }
+                    pdfText = text;
+                    pdfFileNameDiv.textContent = `Loaded: ${file.name}`;
+                };
+                reader.readAsArrayBuffer(file);
+            } catch (error) {
+                console.error('Error reading PDF:', error);
+                pdfFileNameDiv.textContent = 'Error loading PDF.';
+                alert('Error reading PDF file. Please try again.');
+            }
+        } else {
+            pdfText = '';
+            pdfFileNameDiv.textContent = '';
+        }
+    });
+
     // Start chat button click handler
-    startChatButton.addEventListener('click', () => {
+    startChatButton.addEventListener('click', async () => {
         const apiKey = apiKeyInput.value.trim();
         if (!apiKey) {
             alert('Please enter your Gemini API key');
             return;
         }
 
-        // Initialize Gemini API with the provided key
-        initializeGeminiAPI(apiKey);
+        // Validate the API key before initializing the chat
+        const isValid = await validateApiKey(apiKey);
+        if (isValid) {
+            // Initialize Gemini API with the provided key
+            initializeGeminiAPI(apiKey);
+        } else {
+            alert('Invalid Gemini API key. Please check your key and try again.');
+        }
     });
 
     // Send message button click handler
@@ -65,6 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Reset chat session
         chatSession = null;
+        pdfText = '';
+        pdfFileInput.value = '';
+        pdfFileNameDiv.textContent = '';
         
         // Switch back to setup section
         chatSection.style.display = 'none';
@@ -126,8 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
         chatHistory.scrollTop = chatHistory.scrollHeight;
 
         try {
+            let fullMessage = userMessage;
+            if (pdfText) {
+                fullMessage = `Based on the following PDF content:\n\n${pdfText}\n\n---\n\nUser question: ${userMessage}`;
+            }
             // Call Gemini API
-            const response = await callGeminiAPI(userMessage);
+            const response = await callGeminiAPI(fullMessage);
 
             // Remove loading indicator
             chatHistory.removeChild(loadingDiv);
@@ -259,6 +309,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Validate API key function
+    async function validateApiKey(apiKey) {
+        try {
+            // Use a lightweight model from the new list for validation
+            const modelName = 'gemini-2.5-flash-lite'; 
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        role: 'user',
+                        parts: [{ text: 'hello' }]
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    // Specific check for API key validity errors
+                    if (errorData.error.message.toLowerCase().includes('api key not valid') || 
+                        errorData.error.status === 'UNAUTHENTICATED' ||
+                        errorData.error.code === 400) {
+                        return false;
+                    }
+                }
+            }
+            
+            // The key is considered valid if the request doesn't fail with a specific auth error.
+            // Other errors (like quota) don't mean the key is invalid.
+            return true;
+        } catch (error) {
+            console.error('Error validating API key:', error);
+            return false; // Assume invalid on network error
+        }
+    }
+
     // Add message to chat history
     function addMessage(sender, text) {
         const messageDiv = document.createElement('div');
@@ -268,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let formattedText;
         if (sender.toLowerCase() === 'ai') {
             // Use marked.js to convert Markdown to HTML
-            formattedText = marked.parse(text);
+            formattedText = marked(text);
         } else {
             // For user messages, just handle newlines
             formattedText = text.replace(/\n/g, '<br>');
