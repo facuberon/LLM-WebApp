@@ -15,7 +15,7 @@ Una interfaz web dinámica e intuitiva para interactuar con los potentes modelos
 -   **⚙️ Control Total sobre los Parámetros:** Ajusta con precisión la `temperatura`, `top-p`, `top-k` y el máximo de `tokens` para moldear la creatividad y exactitud de la IA.
 -   **📄 Chat con tus Documentos (PDF):** Carga un archivo PDF y la IA lo usará como base de conocimiento para responder tus preguntas de forma contextualizada.
 -   **💬 Interfaz de Chat Moderna:** Una experiencia de usuario limpia, responsiva y agradable para mantener conversaciones fluidas.
--   **💅 Renderizado de Markdown:** Las respuestas de la IA se muestran con formato Markdown, permitiendo una fácil lectura de listas, código, tablas y más.
+-   **👁 Renderizado de Markdown:** Las respuestas de la IA se muestran con formato Markdown, permitiendo una fácil lectura de listas, código, tablas y más.
 -   **⚡ Arquitectura 100% Client-Side:** Toda la lógica se ejecuta en tu navegador. No se necesita un backend, lo que garantiza privacidad y rapidez.
 
 ## 🛠️ Tecnologías Utilizadas
