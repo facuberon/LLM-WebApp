@@ -1,95 +1,131 @@
-# 🚀 LLM-WebApp para Modelos de Gemini AI personalizados
+# 🤖 LLM-WebApp — Chat con Gemini AI
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E44AD?style=for-the-badge&logo=google&logoColor=white)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Heroku](https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)
 
-Una interfaz web dinámica e intuitiva para interactuar con los potentes modelos de IA de Google Gemini. Chatea, personaliza parámetros y obtén respuestas contextualizadas basadas en el contenido de tus propios archivos PDF, todo directamente desde tu navegador.
+Interfaz de chat web construida con **Flask** para interactuar con los modelos de Google Gemini. Permite ajustar parámetros de generación, subir archivos PDF como contexto y ver las respuestas renderizadas en Markdown.
 
+---
 
+## ✨ Características
 
-## ✨ Características Principales
+- **🤖 Modelos de última generación:** `gemini-3-flash-preview` y `gemini-3-pro-preview`.
+- **⚙️ Control de parámetros:** Ajustá `temperatura`, `top-p`, `top-k` y `max tokens` antes de iniciar el chat.
+- **📄 Chat sobre PDFs:** Subí un archivo PDF en el primer mensaje; Gemini lo recibirá en formato nativo (base64 + mime_type) y podrá responder preguntas sobre su contenido.
+- **👁️ Renderizado Markdown:** Las respuestas del modelo se muestran con formato completo: listas, bloques de código, tablas, headings, etc.
+- **💾 Sesiones en servidor:** La sesión se almacena en el filesystem del servidor (Flask-Session), no en cookies, evitando el límite de 4 KB y permitiendo manejar PDFs grandes.
+- **� Reset de conversación:** Botón para reiniciar el chat y cambiar de modelo o PDF.
 
--   **🚀 Selección de Modelos de Vanguardia:** Elige entre las versiones más recientes de Gemini: `gemini-2.5-pro`, `gemini-2.5-flash` y `gemini-2.5-flash-lite`.
--   **⚙️ Control Total sobre los Parámetros:** Ajusta con precisión la `temperatura`, `top-p`, `top-k` y el máximo de `tokens` para moldear la creatividad y exactitud de la IA.
--   **📄 Chat con tus Documentos (PDF):** Carga un archivo PDF y la IA lo usará como base de conocimiento para responder tus preguntas de forma contextualizada.
--   **💬 Interfaz de Chat Moderna:** Una experiencia de usuario limpia, responsiva y agradable para mantener conversaciones fluidas.
--   **👁 Renderizado de Markdown:** Las respuestas de la IA se muestran con formato Markdown, permitiendo una fácil lectura de listas, código, tablas y más.
--   **⚡ Arquitectura 100% Client-Side:** Toda la lógica se ejecuta en tu navegador. No se necesita un backend, lo que garantiza privacidad y rapidez.
+---
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Stack Tecnológico
 
--   **Python:** Para realizar pruebas de llamada de API y ajustes de parámetros de los modelos.
--   **HTML5:** Para la estructura semántica del contenido.
--   **CSS3:** Para el diseño y la apariencia visual.
--   **JavaScript (Vanilla):** Para toda la lógica interactiva y la comunicación con la API.
--   **Google AI JavaScript SDK:** Para la integración directa con los modelos de Gemini.
--   **Marked.js:** Una librería ligera para renderizar Markdown en el cliente.
--   **pdf.js:** Para extraer el texto de los archivos PDF directamente en el navegador.
--   **Docker:** Para la contenedorización de la aplicación.
--   **Heroku:** Para el despliegue de la aplicación en la nube.
+| Capa | Tecnología |
+|---|---|
+| Backend | Python 3.11+ · Flask 3 · Flask-Session |
+| IA | Google Gemini (SDK `google-genai`) |
+| Frontend | HTML5 · CSS3 · JavaScript Vanilla |
+| Markdown | [Marked.js](https://marked.js.org/) (CDN) |
+| Servidor prod. | Gunicorn |
+| Contenedor | Docker · Heroku |
 
-## 🏁 Cómo Empezar
+---
 
-Para ejecutar este proyecto en tu máquina local, sigue estos sencillos pasos.
+## 🏁 Ejecución Local
 
-### Requisitos Previos
+### Requisitos previos
 
-Asegúrate de tener:
-1.  Un navegador web moderno (Chrome, Firefox, Edge).
-2.  Tu propia **Clave API de Google Gemini**. Puedes obtener una en [Google AI Studio](https://aistudio.google.com/app/apikey).
+- Python 3.11+
+- Una [API Key de Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ### Instalación
 
-1.  **Clona el repositorio:**
-    ```bash
-    git repo clone facuberon/LLM-WebApp
-    ```
-2.  **Navega al directorio del proyecto:**
-    ```bash
-    cd LLM-WebApp
-    ```
-3.  **Abre el archivo `index.html` en tu navegador.**
-    ¡Y eso es todo! La aplicación está lista para usarse.
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/facuberon/LLM-WebApp.git
+cd LLM-WebApp
+
+# 2. Instalar dependencias
+pip install -r requirements.txt
+
+
+# 3. Iniciar la app
+python app.py
+```
+
+Abrí **http://localhost:5000** en tu navegador.
+
+> Si no configurás un archivo `.env`, podés ingresar la API Key directamente en el panel lateral de la app al iniciar el primer chat.
+
+---
 
 ## 📖 Guía de Uso
 
-1.  🔑 **Ingresa tu Clave API:** Pega tu clave API de Gemini en el campo correspondiente.
-2.  🤖 **Elige un Modelo:** Selecciona el modelo de IA que desees utilizar en el menú desplegable.
-3.  📄 **Sube un PDF (Opcional):** Haz clic en "Elegir Archivo" para seleccionar un PDF. La IA usará su contenido como contexto.
-4.  🎛️ **Ajusta los Parámetros:** Modifica los deslizadores de `temperatura`, `top-p`, etc., según tus necesidades.
-5.  ▶️ **Inicia la Conversación:** Presiona el botón "Iniciar Chat".
-6.  ⌨️ **Envía Mensajes:** Escribe tu pregunta en el campo de texto y presiona `Enter` o el botón "Enviar".
-7.  🔄 **Reinicia el Chat:** Si quieres empezar de nuevo, haz clic en "Reiniciar Chat" para volver a la pantalla de configuración.
+1. 🔑 **API Key:** Si no la configuraste en `.env`, pegala en el campo del sidebar.
+2. 🤖 **Modelo:** Elegí entre `gemini-3-flash-preview` (más rápido) o `gemini-3-pro-preview` (más capaz).
+3. 📄 **PDF (opcional):** Subí un archivo PDF antes del primer mensaje. Gemini lo recibirá como documento nativo.
+4. 🎛️ **Parámetros:** Ajustá temperatura, top-p, top-k y max tokens según necesites. Se bloquean una vez iniciada la conversación.
+5. ⌨️ **Chat:** Escribí tu mensaje y presioná `Enter` (o `Shift+Enter` para nueva línea).
+6. 🔄 **Resetear:** Hacé clic en "↺ Reiniciar chat" para empezar una nueva conversación con configuración diferente.
 
-## 🐳 Dockerización y Deploy
+---
 
-Esta aplicación ha sido dockerizada para facilitar su despliegue y ejecución en cualquier entorno compatible con Docker.
+## 🐳 Docker
 
-### Ejecución con Docker
+```bash
+# Construir la imagen
+docker build -t llm-webapp .
 
-1.  **Construir la imagen de Docker:**
-    ```bash
-    docker build -t llm-webapp .
-    ```
-2.  **Ejecutar el contenedor:**
-    ```bash
-    docker run -d -p 8080:80 llm-webapp
-    ```
-    La aplicación estará disponible en `http://localhost:8080`.
+# Ejecutar el contenedor (pasando la API Key como variable de entorno)
+docker run -d -p 5000:5000 -e API_KEY=tu_api_key llm-webapp
+```
 
-### Despliegue en Heroku
+La app estará en `http://localhost:5000`.
 
-La aplicación está lista para ser desplegada en Heroku utilizando el stack de contenedores de Heroku. Con el `Dockerfile` y el `Procfile` configurados, puedes desplegar la aplicación siguiendo la [guía de Heroku para contenedores](https://devcenter.heroku.com/articles/container-registry-and-runtime).
+---
+
+## ☁️ Deploy en Heroku
+
+```bash
+heroku container:login
+heroku create nombre-app
+heroku config:set API_KEY=tu_api_key -a nombre-app
+heroku container:push web -a nombre-app
+heroku container:release web -a nombre-app
+```
+
+---
+
+## 📂 Estructura del Proyecto
+
+```
+📦 LLM-WebApp
+ ┣ 📜 app.py              # Aplicación Flask (rutas, lógica, integración Gemini)
+ ┣ 📂 templates/
+ ┃ ┗ 📜 index.html        # Interfaz de chat (HTML + CSS + JS + Marked.js)
+ ┣ 📂 .flask_sessions/    # Archivos de sesión del servidor (generado automáticamente, en .gitignore)
+ ┣ � model.ipynb         # Notebook de pruebas de la API de Gemini
+ ┣ 📜 Dockerfile          # Imagen Docker con Gunicorn
+ ┣ 📜 Procfile            # Comando de arranque para Heroku
+ ┣ 📜 requirements.txt    # Dependencias de Python
+ ┗ 📜 README.md
+```
+
+---
 
 ## 💡 Próximas Mejoras
 
-Este proyecto está en constante evolución. Algunas ideas para el futuro incluyen:
--   [ ] Historial de conversaciones persistente (usando `localStorage`).
--   [ ] Soporte para más formatos de archivo ( `.txt`, `.md`, `.docx`).
--   [ ] Opción para exportar la conversación.
--   [ ] Mejoras en la interfaz de usuario y animaciones.
+- [ ] Soporte para más formatos de archivo (`.txt`, `.docx`).
+- [ ] Opción para exportar la conversación en Markdown o PDF.
+- [ ] Historial de conversaciones múltiples (multi-sesión).
+- [ ] Syntax highlighting en bloques de código.
+- [ ] Más opciones de configuración de modelos.
+
+---
+
+Hecho con ❤️ y Python.

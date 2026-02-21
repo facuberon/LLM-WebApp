@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gemini Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    /* ── Reset & tokens ─────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0e0e10;
+      --surface: #17171a;
+      --border: #2a2a30;
+      --accent: #e8c547;
+      --accent-dim: #a88c2b;
+      --text: #e2e0db;
+      --muted: #6b6870;
+      --user-bg: #1e1e22;
+      --bot-bg: #141416;
+      --radius: 10px;
+      --mono: 'DM Mono', monospace;
+      --serif: 'Fraunces', Georgia, serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      grid-template-rows: 100vh;
+      height: 100vh;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────────────── */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 28px 20px 20px;
+      gap: 20px;
+    }
+
+    .sidebar-logo {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo span {
+      font-style: italic;
+      font-weight: 300;
+      font-size: 13px;
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
+      font-family: var(--mono);
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .settings-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    input[type="range"],
+    select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 7px 10px;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+    }
+
+    input[type="range"] {
+      padding: 4px 0;
+      accent-color: var(--accent);
+      border: none;
+      background: transparent;
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .range-val {
+      font-size: 11px;
+      color: var(--accent);
+      min-width: 30px;
+      text-align: right;
+    }
+
+    .file-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .file-label:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .file-label input {
+      display: none;
+    }
+
+    .file-icon {
+      font-size: 16px;
+    }
+
+    #file-name {
+      font-size: 11px;
+      color: var(--accent-dim);
+      margin-top: 4px;
+      min-height: 14px;
+    }
+
+    .btn-reset {
+      margin-top: auto;
+      padding: 9px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+      text-align: center;
+      display: block;
+    }
+
+    .btn-reset:hover {
+      border-color: #b54a4a;
+      color: #b54a4a;
+    }
+
+    /* ── Main chat area ─────────────────────────────────────────────── */
+    .main {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Flash messages ─────────────────────────────────────────────── */
+    .flash-list {
+      list-style: none;
+      padding: 10px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .flash-list li {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      background: #3a1a1a;
+      border: 1px solid #5a2a2a;
+      color: #e07070;
+    }
+
+    /* ── Message list ───────────────────────────────────────────────── */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 0;
+      scroll-behavior: smooth;
+    }
+
+    .messages::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 12px;
+      opacity: .4;
+    }
+
+    .empty-state .big {
+      font-family: var(--serif);
+      font-size: 48px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .empty-state p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .msg-wrapper {
+      padding: 0 32px;
+      margin-bottom: 4px;
+      animation: fadeUp .25s ease both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .msg {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .msg.user {
+      background: var(--user-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      margin-left: auto;
+      white-space: pre-wrap;
+      /* preserva saltos de línea del usuario */
+    }
+
+    .msg.assistant {
+      background: var(--bot-bg);
+      border: 1px solid transparent;
+      color: var(--text);
+    }
+
+    /* ── Estilos Markdown (respuestas del asistente) ───────────────── */
+    .msg.assistant h1,
+    .msg.assistant h2,
+    .msg.assistant h3,
+    .msg.assistant h4,
+    .msg.assistant h5,
+    .msg.assistant h6 {
+      font-family: var(--serif);
+      color: var(--accent);
+      margin: .9em 0 .35em;
+      line-height: 1.3;
+    }
+
+    .msg.assistant h1 {
+      font-size: 1.35em;
+    }
+
+    .msg.assistant h2 {
+      font-size: 1.2em;
+    }
+
+    .msg.assistant h3 {
+      font-size: 1.05em;
+    }
+
+    .msg.assistant p {
+      margin: .45em 0;
+    }
+
+    .msg.assistant ul,
+    .msg.assistant ol {
+      margin: .4em 0 .4em 1.4em;
+    }
+
+    .msg.assistant li {
+      margin: .2em 0;
+    }
+
+    .msg.assistant code {
+      background: #1a1a1f;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: var(--mono);
+      font-size: .91em;
+      color: #c8b8f0;
+    }
+
+    .msg.assistant pre {
+      background: #111114;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      margin: .6em 0;
+    }
+
+    .msg.assistant pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: .88em;
+      color: #c8e6c9;
+    }
+
+    .msg.assistant blockquote {
+      border-left: 3px solid var(--accent-dim);
+      margin: .5em 0;
+      padding: .3em .8em;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .msg.assistant table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: .6em 0;
+      font-size: .9em;
+    }
+
+    .msg.assistant th,
+    .msg.assistant td {
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    .msg.assistant th {
+      background: var(--surface);
+      color: var(--accent);
+    }
+
+    .msg.assistant a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .msg.assistant strong {
+      color: #f0e0a0;
+    }
+
+    .msg.assistant em {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .msg-meta {
+      max-width: 780px;
+      margin: 0 auto 10px;
+      font-size: 10px;
+      letter-spacing: .06em;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding: 0 4px;
+    }
+
+    .msg-meta.user {
+      text-align: right;
+    }
+
+    .msg-meta.assistant::before {
+      content: "✦ ";
+      color: var(--accent);
+    }
+
+    /* ── Input bar ──────────────────────────────────────────────────── */
+    .input-area {
+      padding: 16px 32px 24px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .input-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .input-inner textarea {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 14px;
+      padding: 12px 16px;
+      resize: none;
+      outline: none;
+      min-height: 48px;
+      max-height: 200px;
+      overflow-y: auto;
+      transition: border-color .2s;
+      line-height: 1.5;
+    }
+
+    .input-inner textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .input-inner textarea::placeholder {
+      color: var(--muted);
+    }
+
+    .btn-send {
+      padding: 12px 20px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius);
+      color: #0e0e10;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      white-space: nowrap;
+      height: 48px;
+    }
+
+    .btn-send:hover {
+      background: #f0d060;
+    }
+
+    .btn-send:active {
+      transform: scale(.97);
+    }
+
+    /* ── Responsive ─────────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .sidebar {
+        max-height: 0;
+        overflow: hidden;
+        padding: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        transition: max-height .3s ease;
+      }
+
+      .sidebar.open {
+        max-height: 600px;
+        padding: 20px;
+      }
+
+      .main {
+        height: 100dvh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- ── Sidebar (configuración) ─────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        Gemini Chat
+        <span>powered by Google Generative AI</span>
+      </div>
+
+      <!-- Clave de API (solo si no está definida en .env) -->
+      {% if not env_key %}
+      <div class="settings-group">
+        <p class="section-label">API Key</p>
+        <label for="api_key">Google API Key</label>
+        <input type="password" id="api_key" name="api_key" form="chat-form" placeholder="AIza…" autocomplete="off" />
+      </div>
+      {% endif %}
+
+      <!-- Model -->
+      <div class="settings-group">
+        <p class="section-label">Modelo</p>
+        <label for="model">Versión</label>
+        <select id="model" name="model" form="chat-form" {% if settings %}disabled{% endif %}>
+          <option value="gemini-3-flash-preview" {% if settings and settings.model=='gemini-3-flash-preview'
+            %}selected{% endif %}>gemini-3-flash-preview</option>
+          <option value="gemini-3-pro-preview" {% if settings and settings.model=='gemini-3-pro-preview' %}selected{%
+            endif %}>gemini-3-pro-preview</option>
+        </select>
+        {% if settings %}<p style="font-size:10px;color:var(--muted);margin-top:4px;">reinicia el chat para cambiar
+          modelo</p>{% endif %}
+      </div>
+
+      <!-- Generation params -->
+      <div class="settings-group">
+        <p class="section-label">Parámetros</p>
+
+        <label>Temperatura: <span id="temp-val">0.7</span></label>
+        <div class="range-row">
+          <input type="range" name="temperature" form="chat-form" id="temperature" min="0" max="1" step="0.05"
+            value="0.7" {% if settings %}disabled{% endif %}
+            oninput="document.getElementById('temp-val').textContent=this.value" />
+        </div>
+
+        <label style="margin-top:8px">Top-P: <span id="topp-val">0.95</span></label>
+        <div class="range-row">
+          <input type="range" name="top_p" form="chat-form" id="top_p" min="0" max="1" step="0.05" value="0.95" {% if
+            settings %}disabled{% endif %} oninput="document.getElementById('topp-val').textContent=this.value" />
+        </div>
+
+        <label style="margin-top:8px">Top-K</label>
+        <input type="number" name="top_k" form="chat-form" value="40" min="1" max="100" {% if settings %}disabled{%
+          endif %} />
+
+        <label style="margin-top:8px">Max Tokens</label>
+        <input type="number" name="max_tokens" form="chat-form" value="8192" min="256" max="32768" {% if settings
+          %}disabled{% endif %} />
+      </div>
+
+      <!-- PDF upload (only on first message) -->
+      {% if not settings %}
+      <div class="settings-group">
+        <p class="section-label">Documento</p>
+        <label class="file-label" for="pdf">
+          <span class="file-icon">📄</span>
+          <span>Subir PDF (opcional)</span>
+          <input type="file" id="pdf" name="pdf" form="chat-form" accept=".pdf"
+            onchange="document.getElementById('file-name').textContent = this.files[0]?.name || ''" />
+        </label>
+        <div id="file-name"></div>
+      </div>
+      {% endif %}
+
+      <a href="/reset" class="btn-reset">↺ &nbsp;Reiniciar chat</a>
+    </aside>
+
+    <!-- ── Main ─────────────────────────────────────────────────────── -->
+    <main class="main">
+
+      <!-- Mensajes flash (errores, avisos) -->
+      {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% if msgs %}
+      <ul class="flash-list">
+        {% for category, message in msgs %}
+        <li>⚠ {{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+
+      <!-- Lista de mensajes del chat -->
+      <div class="messages" id="messages">
+        {% if not messages or messages|length == 0 %}
+        <div class="empty-state">
+          <div class="big">Hola.</div>
+          <p>Configura tu API Key y empieza a chatear.</p>
+        </div>
+        {% else %}
+        {% for msg in messages %}
+        <div class="msg-wrapper">
+          <div class="msg-meta {{ msg.role }}">{{ "tú" if msg.role == "user" else "gemini" }}</div>
+          {% if msg.role == 'assistant' %}
+          <div class="msg assistant"></div>
+          <script>
+            (function () {
+              var el = document.currentScript.previousElementSibling;
+              el.innerHTML = marked.parse({{ msg.content | tojson }});
+              }) ();
+          </script>
+          {% else %}
+          <div class="msg user">{{ msg.content }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <!-- Formulario de entrada -->
+      <div class="input-area">
+        <form id="chat-form" action="/send" method="POST" enctype="multipart/form-data">
+          <div class="input-inner">
+            <textarea name="prompt" id="prompt" rows="1" placeholder="Escribe un mensaje… (Enter para enviar)" required
+              autofocus></textarea>
+            <button type="submit" class="btn-send">Enviar ↑</button>
+          </div>
+        </form>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Scroll automático al último mensaje
+    const msgBox = document.getElementById('messages');
+    if (msgBox) msgBox.scrollTop = msgBox.scrollHeight;
+
+    // Ajuste dinámico de altura del textarea
+    const ta = document.getElementById('prompt');
+    ta.addEventListener('input', () => {
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
+    });
+
+    // Envío con Enter (Shift+Enter = nueva línea)
+    ta.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (ta.value.trim()) ta.closest('form').submit();
+      }
+    });
+  </script>
+</body>
+
+</html>

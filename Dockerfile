@@ -1,12 +1,12 @@
-# Usa una imagen base de Nginx ligera
-FROM nginx:alpine
+FROM python:3.11-slim
 
-# Copia los archivos estáticos de la aplicación al directorio de Nginx
-COPY index.html /usr/share/nginx/html
-COPY styles.css /usr/share/nginx/html
-COPY app.js /usr/share/nginx/html
+WORKDIR /app
 
-# Expone el puerto 80
-EXPOSE 80
+COPY requirements.txt .
 
-# El comando por defecto de Nginx ya se encarga de iniciar el servidor
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV PORT=8501
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:${PORT}", "app:app"]
