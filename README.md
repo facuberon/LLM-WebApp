@@ -19,7 +19,6 @@ Interfaz de chat web construida con **Flask** para interactuar con los modelos d
 - **📄 Chat sobre PDFs:** Subí un archivo PDF en el primer mensaje; Gemini lo recibirá en formato nativo (base64 + mime_type) y podrá responder preguntas sobre su contenido.
 - **👁️ Renderizado Markdown:** Las respuestas del modelo se muestran con formato completo: listas, bloques de código, tablas, headings, etc.
 - **💾 Sesiones en servidor:** La sesión se almacena en el filesystem del servidor (Flask-Session), no en cookies, evitando el límite de 4 KB y permitiendo manejar PDFs grandes.
-- **� Reset de conversación:** Botón para reiniciar el chat y cambiar de modelo o PDF.
 
 ---
 
