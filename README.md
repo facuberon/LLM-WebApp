@@ -108,7 +108,7 @@ heroku container:release web -a nombre-app
  ┣ 📂 templates/
  ┃ ┗ 📜 index.html        # Interfaz de chat (HTML + CSS + JS + Marked.js)
  ┣ 📂 .flask_sessions/    # Archivos de sesión del servidor (generado automáticamente, en .gitignore)
- ┣ � model.ipynb         # Notebook de pruebas de la API de Gemini
+ ┣ 📓 model.ipynb         # Notebook de pruebas de la API de Gemini
  ┣ 📜 Dockerfile          # Imagen Docker con Gunicorn
  ┣ 📜 Procfile            # Comando de arranque para Heroku
  ┣ 📜 requirements.txt    # Dependencias de Python
@@ -122,9 +122,11 @@ heroku container:release web -a nombre-app
 - [ ] Soporte para más formatos de archivo (`.txt`, `.docx`).
 - [ ] Opción para exportar la conversación en Markdown o PDF.
 - [ ] Historial de conversaciones múltiples (multi-sesión).
-- [ ] Syntax highlighting en bloques de código.
-- [ ] Más opciones de configuración de modelos.
+- [ ] Syntax highlighting en bloques de código de la interfaz.
+- [ ] Implementación de thinking_level (`low`, `medium`, `high`) para ajustar la profundidad del razonamiento.
+- [ ] Integración de herramientas nativas: Google Search Grounding y Google Maps.
+- [ ] Control de `media_resolution` para optimizar el análisis de archivos y OCR en documentos densos.
+- [ ] Gestión de `thoughtSignature` para mantener la coherencia del razonamiento en sesiones largas.
+- [ ] Configuración de System Instructions para definir la personalidad del modelo desde la UI.
 
 ---
-
-Hecho con ❤️ y Python.
