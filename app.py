@@ -54,6 +54,9 @@ def build_history_parts(history: list) -> list:
                         mime_type=p["mime_type"],
                     )
                 )
+            elif isinstance(p, dict) and p.get("type") == "text":
+                parts.append(types.Part.from_text(text=p["text"]))
+                
         contents.append(types.Content(role=item["role"], parts=parts))
     return contents
 
